@@ -6,6 +6,7 @@ import me.rbrickis.minecraft.server.packet.State;
 import me.rbrickis.minecraft.server.packet.clientbound.status.StatusPongPacket;
 import me.rbrickis.minecraft.server.packet.clientbound.status.StatusResponsePacket;
 import me.rbrickis.minecraft.server.packet.serverbound.handshake.HandshakePacket;
+import me.rbrickis.minecraft.server.packet.serverbound.login.LoginStartPacket;
 import me.rbrickis.minecraft.server.packet.serverbound.status.StatusPingPacket;
 import me.rbrickis.minecraft.server.packet.serverbound.status.StatusRequestPacket;
 import me.rbrickis.minecraft.server.session.Session;
@@ -67,5 +68,10 @@ public class PacketListener {
         StatusPongPacket pong = new StatusPongPacket();
         pong.setPayload(payload);
         session.sendPacket(pong);
+    }
+
+    @Subscribe
+    public void onLoginStart(LoginStartPacket loginStart) {
+
     }
 }

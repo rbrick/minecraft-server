@@ -3,6 +3,7 @@ package me.rbrickis.minecraft.server;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.JsonObject;
 import me.rbrickis.minecraft.server.packet.State;
+import me.rbrickis.minecraft.server.packet.clientbound.login.LoginDisconnectPacket;
 import me.rbrickis.minecraft.server.packet.clientbound.status.StatusPongPacket;
 import me.rbrickis.minecraft.server.packet.clientbound.status.StatusResponsePacket;
 import me.rbrickis.minecraft.server.packet.serverbound.handshake.HandshakePacket;
@@ -47,7 +48,8 @@ public class PacketListener {
 
             JsonObject description = new JsonObject();
             {
-                description.addProperty("text", "\u00A74\u00A7l420 \u00A76\u00A7lBlaze \u00A7e\u00A7lit! ");
+                description.addProperty("text",
+                    "\u00A74\u00A7l420 \u00A76\u00A7lBlaze \u00A7e\u00A7lit! ");
             }
 
             status.add("version", version);
@@ -72,6 +74,16 @@ public class PacketListener {
 
     @Subscribe
     public void onLoginStart(LoginStartPacket loginStart) {
+        Session session = loginStart.getSession();
 
+        LoginDisconnectPacket packet = new LoginDisconnectPacket();
+
+        JsonObject reason = new JsonObject();
+        {
+            reason.addProperty("text", "I KICKED Y0 ASS");
+        }
+
+        packet.setReason(reason);
+        session.sendPacket(packet);
     }
 }

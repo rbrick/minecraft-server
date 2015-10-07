@@ -1,5 +1,6 @@
 package me.rbrickis.minecraft.server.packet;
 
+import me.rbrickis.minecraft.server.packet.clientbound.login.LoginDisconnectPacket;
 import me.rbrickis.minecraft.server.packet.clientbound.status.StatusPongPacket;
 import me.rbrickis.minecraft.server.packet.clientbound.status.StatusResponsePacket;
 import me.rbrickis.minecraft.server.packet.serverbound.handshake.HandshakePacket;
@@ -89,6 +90,7 @@ public final class PacketRegistry {
         registerClientboundPacket(StatusPongPacket.class);
 
         // Login
+        registerClientboundPacket(LoginDisconnectPacket.class);
 
     }
 

@@ -3,6 +3,7 @@ package me.rbrickis.minecraft.server.netty;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public final class BufferUtils {
 
@@ -45,7 +46,16 @@ public final class BufferUtils {
         return new String(data, StandardCharsets.UTF_8); // create a new UTF-8 encoded string
     }
 
+    public static void writeUUID(ByteBuf out, UUID id) {
+        out.writeLong(id.getMostSignificantBits());
+        out.writeLong(id.getLeastSignificantBits());
+    }
 
+    public static UUID readUUID(ByteBuf in) {
+        long mostSignificant = in.readLong();
+        long leastSignificant = in.readLong();
+        return new UUID(mostSignificant, leastSignificant);
+    }
 
     private BufferUtils() {
     }

@@ -1,25 +1,23 @@
 package me.rbrickis.minecraft.server.packet.clientbound.login;
 
-import com.google.gson.JsonObject;
 import io.netty.buffer.ByteBuf;
+import lombok.Getter;
+import lombok.Setter;
 import me.rbrickis.minecraft.server.netty.BufferUtils;
 import me.rbrickis.minecraft.server.packet.*;
 
+
 @PacketInfo(
-    info = "http://wiki.vg/Protocol#Disconnect_2",
-    id = 0x00,
+    info = "http://wiki.vg/Protocol#Set_Compression_2",
+    id = 0x03,
     direction = Direction.CLIENTBOUND,
     state = State.LOGIN)
-public class LoginDisconnectPacket extends ClientboundPacket {
+public class LoginSetCompressionPacket extends ClientboundPacket {
 
-    private JsonObject reason;
+    @Getter @Setter private int threshhold;
 
     @Override
     public void encode(ByteBuf buf) {
-        BufferUtils.writeString(buf, reason.toString());
-    }
-
-    public void setReason(JsonObject reason) {
-        this.reason = reason;
+        BufferUtils.writeVarInt(buf, threshhold);
     }
 }

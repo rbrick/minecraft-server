@@ -1,23 +1,16 @@
 package me.rbrickis.minecraft.server.packet.serverbound.status;
 
 import io.netty.buffer.ByteBuf;
-import me.rbrickis.minecraft.server.packet.Direction;
-import me.rbrickis.minecraft.server.packet.Packet;
-import me.rbrickis.minecraft.server.packet.PacketInfo;
-import me.rbrickis.minecraft.server.packet.State;
+import me.rbrickis.minecraft.server.packet.*;
 
 @PacketInfo(
     direction = Direction.SERVERBOUND,
     id = 0x00,
     info = "http://wiki.vg/Protocol#Request",
     state = State.STATUS)
-public class StatusRequestPacket extends Packet {
+public class StatusRequestPacket extends ServerboundPacket {
     @Override
     public void decode(ByteBuf buf) {
-        System.out.println("Decoding for StatusRequest");
-    }
-
-    @Override
-    public void encode(ByteBuf buf) {
+        // NO-OP
     }
 }

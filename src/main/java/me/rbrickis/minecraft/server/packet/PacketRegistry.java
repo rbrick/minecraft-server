@@ -1,6 +1,8 @@
 package me.rbrickis.minecraft.server.packet;
 
 import me.rbrickis.minecraft.server.packet.clientbound.login.LoginDisconnectPacket;
+import me.rbrickis.minecraft.server.packet.clientbound.login.LoginSetCompressionPacket;
+import me.rbrickis.minecraft.server.packet.clientbound.login.LoginSuccessPacket;
 import me.rbrickis.minecraft.server.packet.clientbound.status.StatusPongPacket;
 import me.rbrickis.minecraft.server.packet.clientbound.status.StatusResponsePacket;
 import me.rbrickis.minecraft.server.packet.serverbound.handshake.HandshakePacket;
@@ -30,7 +32,7 @@ public final class PacketRegistry {
 
 
 
-    public static void registerServerboundPacket(Class<? extends Packet> packetClazz) {
+    public static void registerServerboundPacket(Class<? extends ServerboundPacket> packetClazz) {
         if (!packetClazz.isAnnotationPresent(PacketInfo.class)) {
             throw new IllegalArgumentException(
                 "All packets must be marked with the PacketInfo annotation");
@@ -40,7 +42,7 @@ public final class PacketRegistry {
         stateMap.register(packetClazz);
     }
 
-    public static void registerClientboundPacket(Class<? extends Packet> packetClazz) {
+    public static void registerClientboundPacket(Class<? extends ClientboundPacket> packetClazz) {
         if (!packetClazz.isAnnotationPresent(PacketInfo.class)) {
             throw new IllegalArgumentException(
                 "All packets must be marked with the PacketInfo annotation");
@@ -72,25 +74,42 @@ public final class PacketRegistry {
     static {
         // Serverbound packets
 
-        // Handshake
-        registerServerboundPacket(HandshakePacket.class);
+        {
 
-        // Status
-        registerServerboundPacket(StatusRequestPacket.class);
-        registerServerboundPacket(StatusPingPacket.class);
+            {
+                // Handshake
+                registerServerboundPacket(HandshakePacket.class);
+            }
 
-        // Login
-        registerServerboundPacket(LoginStartPacket.class);
+
+            {
+                // Status
+                registerServerboundPacket(StatusRequestPacket.class);
+                registerServerboundPacket(StatusPingPacket.class);
+            }
+
+            {
+                // Login
+                registerServerboundPacket(LoginStartPacket.class);
+            }
+        }
 
 
         // Clientbound
+        {
+            {
+                // Status
+                registerClientboundPacket(StatusResponsePacket.class);
+                registerClientboundPacket(StatusPongPacket.class);
+            }
 
-        // Status
-        registerClientboundPacket(StatusResponsePacket.class);
-        registerClientboundPacket(StatusPongPacket.class);
-
-        // Login
-        registerClientboundPacket(LoginDisconnectPacket.class);
+            {
+                // Login
+                registerClientboundPacket(LoginDisconnectPacket.class);
+                registerClientboundPacket(LoginSuccessPacket.class);
+                registerClientboundPacket(LoginSetCompressionPacket.class);
+            }
+        }
 
     }
 

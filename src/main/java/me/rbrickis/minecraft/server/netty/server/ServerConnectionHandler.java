@@ -1,4 +1,4 @@
-package me.rbrickis.minecraft.server.netty;
+package me.rbrickis.minecraft.server.netty.server;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -6,29 +6,28 @@ import io.netty.channel.ChannelHandlerContext;
 import me.rbrickis.minecraft.server.impl.MinecraftServer;
 import me.rbrickis.minecraft.server.packet.Packet;
 import me.rbrickis.minecraft.server.packet.State;
-import me.rbrickis.minecraft.server.session.Session;
+import me.rbrickis.minecraft.server.connection.player.PlayerConnection;
 
 import java.util.Optional;
 
-public class SessionChannelHandler extends ChannelHandlerAdapter {
+public class ServerConnectionHandler extends ChannelHandlerAdapter {
 
-    private Optional<Session> session = Optional.<Session>empty();
-
+    private Optional<PlayerConnection> connection = Optional.empty();
 
     private MinecraftServer server;
 
-    public SessionChannelHandler(MinecraftServer server) {
+    public ServerConnectionHandler(MinecraftServer server) {
         this.server = server;
     }
 
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        if (!session.isPresent()) {
-            Session session = createSession(ctx.channel());
-            session.setCurrentState(State.HANDSHAKE);
-            server.getSessionMap().put(ctx.channel(), session);
-            this.session = Optional.of(session);
+        if (!connection.isPresent()) {
+            PlayerConnection playerConnection = createConnection(ctx.channel());
+            playerConnection.setCurrentState(State.HANDSHAKE);
+            server.getSessionMap().put(ctx.channel(), playerConnection);
+            this.connection = Optional.of(playerConnection);
         }
     }
 
@@ -42,16 +41,15 @@ public class SessionChannelHandler extends ChannelHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof Packet) {
             Packet packet = (Packet) msg;
-            System.out.println(packet.getClass().getSimpleName());
             server.getEventBus().post(packet);
         }
     }
 
 
-    private Session createSession(Channel channel) {
-        if (session.isPresent())
-            return session.get();
-        return (session = Optional.of(new Session(channel))).get();
+    private PlayerConnection createConnection(Channel channel) {
+        if (connection.isPresent())
+            return connection.get();
+        return (connection = Optional.of(new PlayerConnection(channel))).get();
     }
 
 }

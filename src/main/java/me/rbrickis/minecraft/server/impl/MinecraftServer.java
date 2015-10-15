@@ -2,15 +2,17 @@ package me.rbrickis.minecraft.server.impl;
 
 import com.google.common.eventbus.EventBus;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import me.rbrickis.minecraft.server.Main;
 import me.rbrickis.minecraft.server.api.Server;
-import me.rbrickis.minecraft.server.netty.ServerInitializer;
-import me.rbrickis.minecraft.server.session.Session;
+import me.rbrickis.minecraft.server.netty.server.ServerInitializer;
+import me.rbrickis.minecraft.server.connection.player.PlayerConnection;
 
-import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,12 +20,12 @@ import java.util.Map;
 public class MinecraftServer implements Server {
 
     private EventLoopGroup boss, worker;
-    private Map<Channel, Session> sessionMap = new HashMap<>();
+    private Map<Channel, PlayerConnection> sessionMap = new HashMap<>();
     private ServerBootstrap bootstrap;
     private int port;
     private EventBus eventBus = new EventBus();
 
-    public static final PublicKey PUBLIC_KEY = null;
+//    public static final PublicKey PUBLIC_KEY = null;
 
     public MinecraftServer(int port) {
         this.port = port;
@@ -74,7 +76,7 @@ public class MinecraftServer implements Server {
         boss.shutdownGracefully();
     }
 
-    public Map<Channel, Session> getSessionMap() {
+    public Map<Channel, PlayerConnection> getSessionMap() {
         return sessionMap;
     }
 

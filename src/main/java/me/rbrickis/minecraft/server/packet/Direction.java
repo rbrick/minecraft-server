@@ -10,6 +10,13 @@ public enum Direction {
     /**
      * Clientbound = Packets being sent to the client
      */
-    CLIENTBOUND
+    CLIENTBOUND,
+
+
+    /**
+     * Common packets shared between both the client and the server
+     * (The server both sends, and reads these packets)
+     */
+    SHARED
 
 }

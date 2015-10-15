@@ -28,4 +28,5 @@ public class HandshakePacket extends ServerboundPacket {
         this.port = buf.readUnsignedShort();
         this.nextState = State.fromInteger(BufferUtils.readVarInt(buf));
     }
+
 }

@@ -5,20 +5,25 @@ import com.google.common.escape.Escapers;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import me.rbrickis.minecraft.server.connection.player.PlayerConnection;
 import me.rbrickis.minecraft.server.packet.State;
-import me.rbrickis.minecraft.server.packet.clientbound.login.LoginSetCompressionPacket;
 import me.rbrickis.minecraft.server.packet.clientbound.login.LoginSuccessPacket;
+import me.rbrickis.minecraft.server.packet.clientbound.play.PlayDisconnectPacket;
+import me.rbrickis.minecraft.server.packet.clientbound.play.PlaySetCompressionPacket;
 import me.rbrickis.minecraft.server.packet.clientbound.status.StatusPongPacket;
 import me.rbrickis.minecraft.server.packet.clientbound.status.StatusResponsePacket;
 import me.rbrickis.minecraft.server.packet.serverbound.handshake.HandshakePacket;
 import me.rbrickis.minecraft.server.packet.serverbound.login.LoginStartPacket;
 import me.rbrickis.minecraft.server.packet.serverbound.status.StatusPingPacket;
 import me.rbrickis.minecraft.server.packet.serverbound.status.StatusRequestPacket;
-import me.rbrickis.minecraft.server.session.Session;
 
+import java.util.Random;
 import java.util.UUID;
 
 public class PacketListener {
+
+    private Random random = new Random(System.currentTimeMillis());
+
 
     @Subscribe
     public void onHandshake(HandshakePacket handshake) {
@@ -28,13 +33,14 @@ public class PacketListener {
         System.out.println("State    : " + handshake.getNextState());
 
         State state = handshake.getNextState();
-        Session session = handshake.getSession();
-        session.setCurrentState(state);
+        PlayerConnection playerConnection = handshake.getPlayerConnection();
+        playerConnection.setCurrentState(state);
+        playerConnection.setProtocol(handshake.getProtocol());
     }
 
     @Subscribe
     public void onStatusRequest(StatusRequestPacket request) {
-        Session session = request.getSession();
+        PlayerConnection playerConnection = request.getPlayerConnection();
         String motd = "§4§l420 §6§lBlaze §e§lit!";
         Escaper escaper = Escapers.builder().addEscape('§', "\u00A7").build();
 
@@ -42,13 +48,13 @@ public class PacketListener {
         {
             JsonObject version = new JsonObject();
             {
-                version.addProperty("name", "YOU OUT OF DATE, BITCH!");
-                version.addProperty("protocol", 5);
+                version.addProperty("name", escaper.escape("§r§c§lPlayers: §f9001§6/§f-1337"));
+                version.addProperty("protocol", -1);
             }
 
             JsonObject players = new JsonObject();
             {
-                players.addProperty("max", -1337);
+                players.addProperty("max", -0x7777777);
                 players.addProperty("online", 9001);
 
                 JsonArray array = new JsonArray();
@@ -90,35 +96,77 @@ public class PacketListener {
         final StatusResponsePacket packet = new StatusResponsePacket();
 
         packet.setStatus(status);
-        session.sendPacket(packet);
+        playerConnection.sendPacket(packet);
     }
 
 
     @Subscribe
     public void onStatusPing(StatusPingPacket ping) {
-        Session session = ping.getSession();
+        PlayerConnection playerConnection = ping.getPlayerConnection();
         long payload = ping.getPayload();
         StatusPongPacket pong = new StatusPongPacket();
         pong.setPayload(payload);
-        session.sendPacket(pong);
+        playerConnection.sendPacket(pong);
     }
 
     @Subscribe
     public void onLoginStart(LoginStartPacket loginStart) {
-        Session session = loginStart.getSession();
+        PlayerConnection playerConnection = loginStart.getPlayerConnection();
 
         String name = loginStart.getName();
+        UUID id = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes());
 
         LoginSuccessPacket packet = new LoginSuccessPacket();
-        packet.setId(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes()));
+        packet.setId(id);
         packet.setName(name);
 
-        session.sendPacket(packet);
+        playerConnection.sendPacket(packet); // Send the packet
+
+        // Now that packet is sent, set the state to play
+        playerConnection.setCurrentState(State.PLAY);  // Set the play state
+
+        // Set the session just cause :P
+        playerConnection.setName(name);
+        playerConnection.setUuid(id);
+
+
+        /*
+        For future reference:
+
+        After LoginSuccess is sent to the client (see above), the Game (client) switches to the PLAY
+        state, meaning that after login success, I should be using things related to PLAY
+        So i should of been using the PLAY set compression packet.
+
 
         LoginSetCompressionPacket packet1 = new LoginSetCompressionPacket();
         packet1.setThreshhold(-1);
-
         session.sendPacket(packet1);
+         */
+
+        if (playerConnection.getProtocol() > 5) {
+            PlaySetCompressionPacket setCompression = new PlaySetCompressionPacket();
+            setCompression.setThreshhold(-1);
+            playerConnection.sendPacket(setCompression);
+        }
+
+        PlayDisconnectPacket disconnect = new PlayDisconnectPacket();
+
+        JsonObject reason = new JsonObject();
+        {
+            reason.addProperty("text",
+                "\u00A77Reason: \u00A7cProxy server is offline.\n\n\u00A77Name:\u00A7r "
+                    + playerConnection.getName() + "\n \u00A77UUID:\u00A7r " + playerConnection
+                    .getUuid().toString() + "\n\n\n");
+        }
+
+        disconnect.setReason(reason);
+
+        playerConnection.sendPacket(disconnect);
+
+
+        //        session.redirect(new InetSocketAddress("localhost", 25566));
 
     }
+
+
 }

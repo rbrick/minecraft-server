@@ -6,7 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import me.rbrickis.minecraft.server.impl.MinecraftServer;
 import me.rbrickis.minecraft.server.packet.Packet;
 import me.rbrickis.minecraft.server.packet.State;
-import me.rbrickis.minecraft.server.connection.player.PlayerConnection;
+import me.rbrickis.minecraft.server.connection.PlayerConnection;
 
 import java.util.Optional;
 

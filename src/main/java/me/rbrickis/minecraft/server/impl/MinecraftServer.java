@@ -11,7 +11,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import me.rbrickis.minecraft.server.Main;
 import me.rbrickis.minecraft.server.api.Server;
 import me.rbrickis.minecraft.server.netty.server.ServerInitializer;
-import me.rbrickis.minecraft.server.connection.player.PlayerConnection;
+import me.rbrickis.minecraft.server.connection.PlayerConnection;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -5,7 +5,7 @@ import com.google.common.escape.Escapers;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import me.rbrickis.minecraft.server.connection.player.PlayerConnection;
+import me.rbrickis.minecraft.server.connection.PlayerConnection;
 import me.rbrickis.minecraft.server.packet.State;
 import me.rbrickis.minecraft.server.packet.clientbound.login.LoginSuccessPacket;
 import me.rbrickis.minecraft.server.packet.clientbound.play.PlayDisconnectPacket;

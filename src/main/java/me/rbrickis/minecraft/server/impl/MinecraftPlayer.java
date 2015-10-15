@@ -1,7 +1,7 @@
 package me.rbrickis.minecraft.server.impl;
 
 import me.rbrickis.minecraft.server.api.Player;
-import me.rbrickis.minecraft.server.connection.player.PlayerConnection;
+import me.rbrickis.minecraft.server.connection.PlayerConnection;
 
 import java.util.UUID;
 

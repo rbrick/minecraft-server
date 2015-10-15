@@ -6,7 +6,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import me.rbrickis.minecraft.server.impl.MinecraftServer;
 import me.rbrickis.minecraft.server.netty.BufferUtils;
 import me.rbrickis.minecraft.server.packet.*;
-import me.rbrickis.minecraft.server.connection.player.PlayerConnection;
+import me.rbrickis.minecraft.server.connection.PlayerConnection;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package me.rbrickis.minecraft.server.connection.player;
+package me.rbrickis.minecraft.server.connection;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;

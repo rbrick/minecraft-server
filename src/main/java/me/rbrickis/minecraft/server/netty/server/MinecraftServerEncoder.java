@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import me.rbrickis.minecraft.server.netty.BufferUtils;
 import me.rbrickis.minecraft.server.packet.*;
-import me.rbrickis.minecraft.server.connection.player.PlayerConnection;
+import me.rbrickis.minecraft.server.connection.PlayerConnection;
 
 public class MinecraftServerEncoder extends MessageToByteEncoder<Packet> {
 

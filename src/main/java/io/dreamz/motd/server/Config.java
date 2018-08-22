@@ -1,8 +1,5 @@
 package io.dreamz.motd.server;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +17,11 @@ public class Config {
     private String versionMessage = "&r&6&lComing Soon™";
     private String motd = "&c&lDreamZ Network is Offline!\n&6sorry :c";
     private String disconnectMessage = "&c&lDreamZ Network is Offline!\n&6sorry :c";
+    private String serverIcon = "";
+
+    public boolean hasIcon() {
+        return !serverIcon.isEmpty();
+    }
 
 
 

@@ -1,5 +1,6 @@
 {
   "versionMessage": "&b&lComing Soon",
   "motd": "&c&lDreamZ Network is Offline!\n&6sorry :c",
-  "disconnectMessage": "&c&lDreamZ Network is Offline!\n&6sorry :c"
+  "disconnectMessage": "&c&lDreamZ Network is Offline!\n&6sorry :c",
+  "serverIcon": "server-icon.png"
 }

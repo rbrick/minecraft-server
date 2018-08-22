@@ -17,9 +17,17 @@ import io.dreamz.motd.server.packet.serverbound.status.StatusPingPacket;
 import io.dreamz.motd.server.packet.serverbound.status.StatusRequestPacket;
 import org.bukkit.ChatColor;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.UUID;
 
 public class PacketListener {
+
+
 
     private Config config;
 
@@ -49,6 +57,21 @@ public class PacketListener {
         response.add("version", version);
         response.add("players", players);
         response.add("description", description);
+
+        if (config.hasIcon()) {
+            File file = new File(config.getServerIcon());
+
+            if (file.exists()) {
+                try {
+                    byte[] data = Files.readAllBytes(Paths.get(file.toURI()));
+
+                    this.response.addProperty("favicon", Main.FAVICON_PREFIX + Base64.getEncoder().encodeToString(data));
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
     }
 

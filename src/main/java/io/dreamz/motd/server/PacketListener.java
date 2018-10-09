@@ -6,9 +6,9 @@ import com.google.gson.JsonObject;
 import io.dreamz.motd.server.api.chat.TextBuilder;
 import io.dreamz.motd.server.connection.PlayerConnection;
 import io.dreamz.motd.server.packet.State;
+import io.dreamz.motd.server.packet.clientbound.login.LoginSetCompressionPacket;
 import io.dreamz.motd.server.packet.clientbound.login.LoginSuccessPacket;
 import io.dreamz.motd.server.packet.clientbound.play.PlayDisconnectPacket;
-import io.dreamz.motd.server.packet.clientbound.play.PlaySetCompressionPacket;
 import io.dreamz.motd.server.packet.clientbound.status.StatusPongPacket;
 import io.dreamz.motd.server.packet.clientbound.status.StatusResponsePacket;
 import io.dreamz.motd.server.packet.serverbound.handshake.HandshakePacket;
@@ -19,7 +19,6 @@ import org.bukkit.ChatColor;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
@@ -28,12 +27,12 @@ import java.util.UUID;
 public class PacketListener {
 
 
-
     private Config config;
 
     private JsonObject version = new JsonObject();
 
     private JsonObject players = new JsonObject();
+
     {
         players.addProperty("max", 0);
         players.addProperty("online", 0);
@@ -76,13 +75,17 @@ public class PacketListener {
     }
 
 
-
     @Subscribe
     public void onHandshake(HandshakePacket handshake) {
         State state = handshake.getNextState();
         PlayerConnection playerConnection = handshake.getPlayerConnection();
         playerConnection.setCurrentState(state);
         playerConnection.setProtocol(handshake.getProtocol());
+
+//        if (state == State.LOGIN) {
+
+//        }
+
     }
 
 
@@ -140,8 +143,8 @@ public class PacketListener {
          */
 
         if (playerConnection.getProtocol() > 5) {
-            PlaySetCompressionPacket setCompression = new PlaySetCompressionPacket();
-            setCompression.setThreshhold(-1);
+            LoginSetCompressionPacket setCompression = new LoginSetCompressionPacket();
+            setCompression.setThreshhold(0);
             playerConnection.sendPacket(setCompression);
         }
 

@@ -34,6 +34,7 @@ public class ServerConnectionHandler extends SimpleChannelInboundHandler<Object>
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         ctx.channel().close();
+        server.getSessionMap().remove(ctx.channel());
     }
 
 
@@ -55,9 +56,7 @@ public class ServerConnectionHandler extends SimpleChannelInboundHandler<Object>
 
 
     private PlayerConnection createConnection(Channel channel) {
-        if (connection.isPresent())
-            return connection.get();
-        return (connection = Optional.of(new PlayerConnection(channel))).get();
+        return connection.orElseGet(() -> (connection = Optional.of(new PlayerConnection(channel))).get());
     }
 
 }

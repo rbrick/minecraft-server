@@ -3,42 +3,37 @@ package io.dreamz.motd.server.impl;
 import com.google.common.eventbus.EventBus;
 import io.dreamz.motd.server.api.Server;
 import io.dreamz.motd.server.connection.PlayerConnection;
+import io.dreamz.motd.server.netty.NettyUtils;
 import io.dreamz.motd.server.netty.server.ServerInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MinecraftServer implements Server {
 
     private EventLoopGroup boss, worker;
-    private Map<Channel, PlayerConnection> sessionMap = new HashMap<>();
+    private Map<Channel, PlayerConnection> sessionMap = new ConcurrentHashMap<>();
     private ServerBootstrap bootstrap;
     private int port;
     private EventBus eventBus = new EventBus();
 
-//    public static final PublicKey PUBLIC_KEY = null;
-
     public MinecraftServer(int port) {
         this.port = port;
-        this.boss = new NioEventLoopGroup();
-        this.worker = new NioEventLoopGroup();
+        this.boss = NettyUtils.getEpollLoopGroupIfExist();
+        this.worker = NettyUtils.getEpollLoopGroupIfExist();
         this.bootstrap = new ServerBootstrap().group(boss, worker).channel(
-            NioServerSocketChannel.class)          // Type of server socket we use
-            .childHandler(new ServerInitializer(this))          // our channel initializer
-            .childOption(ChannelOption.TCP_NODELAY, true)
-            .childOption(ChannelOption.SO_KEEPALIVE, true); // keep the connection alive
+                NettyUtils.getEpollServerSocketChannelIfExist())          // Type of server socket we use
+                .childHandler(new ServerInitializer(this))          // our channel initializer
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.SO_KEEPALIVE, true); // keep the connection alive
 
     }
-
 
 
     @Override
@@ -46,7 +41,6 @@ public class MinecraftServer implements Server {
         try {
             ChannelFuture future = this.bootstrap.bind(port).sync();
             future.channel().closeFuture().sync().addListener(future1 -> {
-
                 System.out.println("Good bye.");
             });
         } catch (InterruptedException e) {

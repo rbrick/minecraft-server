@@ -29,5 +29,4 @@ public class PlayerConnection {
         packet.setPlayerConnection(this);
         return channel.writeAndFlush(packet);
     }
-
 }
